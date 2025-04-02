@@ -1,6 +1,6 @@
 use vscodehelper_macros::StringHolder;
 
 #[derive(StringHolder)]
-pub struct ThemeBackground {
+pub struct Color {
     inner: String,
 }

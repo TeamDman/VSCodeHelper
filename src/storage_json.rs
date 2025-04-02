@@ -3,7 +3,8 @@ use std::path::PathBuf;
 use crate::machine_id::MachineId;
 use crate::paths::VSCodePath;
 use crate::theme::Theme;
-use crate::theme_background::ThemeBackground;
+use crate::color::Color;
+use crate::window_splash::WindowSplash;
 use crate::windows_state::WindowsState;
 use serde::Deserialize;
 use serde::Serialize;
@@ -15,8 +16,12 @@ pub struct VSCodeStorageJson {
     #[serde(rename = "telemetry.machineId")]
     pub telemetry_machine_id: MachineId,
     pub theme: Theme,
-    pub theme_background: ThemeBackground,
+    pub theme_background: Color,
     pub windows_state: WindowsState,
+    pub picker_working_dir: PathBuf,
+    #[serde(rename="quit.from.restart")]
+    pub quit_from_restart: bool,
+    pub window_splash: WindowSplash,
 }
 
 impl VSCodeStorageJson {
