@@ -4,9 +4,10 @@ use std::path::PathBuf;
 pub enum VSCodePath {
     AppData,
     StorageJson,
+    StateVscdb,
 }
 impl VSCodePath {
-    pub fn try_path(self) -> eyre::Result<PathBuf> {
+    pub fn path(self) -> eyre::Result<PathBuf> {
         self.try_into()
     }
 }
@@ -26,6 +27,14 @@ impl TryFrom<VSCodePath> for PathBuf {
                     .join("User")
                     .join("globalStorage")
                     .join("storage.json"))
+            }
+            VSCodePath::StateVscdb => {
+                let app_data: PathBuf = VSCodePath::AppData.try_into()?;
+                Ok(PathBuf::from(app_data)
+                    .join("Code")
+                    .join("User")
+                    .join("globalStorage")
+                    .join("state.vscdb"))
             }
         }
     }
