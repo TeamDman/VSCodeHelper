@@ -6,7 +6,7 @@ pub fn main() -> eyre::Result<()> {
     let mut state_vscdb = StateVscdb::try_default()?;
     let recently_opened = state_vscdb.read::<HistoryRecentlyOpenedPathsListKey>()?;
     println!("Recently opened paths:");
-    for entry in recently_opened.entries {
+    for entry in recently_opened.entries.iter().take(25) {
         println!("  - {:?}", entry);
     }
 
