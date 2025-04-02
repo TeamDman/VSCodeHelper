@@ -19,14 +19,27 @@ impl StateVscdb {
         let connection = SqliteConnection::establish(&vscdb_path.to_string_lossy())?;
         Ok(Self { connection })
     }
+    pub fn keys(&mut self) -> eyre::Result<Vec<String>> {
+        let keys = ItemTable
+            .select(key)
+            .distinct()
+            .load::<String>(&mut self.connection)?;
+        Ok(keys)
+    }
+    pub fn entries(&mut self) -> eyre::Result<Vec<Item>> {
+        let entries = ItemTable
+            .select(Item::as_select())
+            .load::<Item>(&mut self.connection)?;
+        Ok(entries)
+    }
 }
 impl StateVscdb {
     pub fn read<K: Key>(&mut self) -> eyre::Result<K::Value> {
-        let result = ItemTable
+        let item = ItemTable
             .filter(key.eq(K::KEY))
             .select(Item::as_select())
             .first::<Item>(&mut self.connection)?;
-        let rtn: K::Value = serde_json::from_slice(&result.value)?;
+        let rtn = item.parse::<K>()?;
         Ok(rtn)
     }
 }

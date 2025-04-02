@@ -1,5 +1,5 @@
 use super::ui_state::UiState;
-use super::workspace_identifier::WorkspaceIdentifier;
+use super::workspace::WorkspaceIdentifier;
 use crate::storage_json::uri::Uri;
 use serde::Deserialize;
 use serde::Serialize;

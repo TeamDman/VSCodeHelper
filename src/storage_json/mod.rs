@@ -22,4 +22,3 @@ pub mod window_splash;
 pub mod windows_state;
 pub mod workspace;
 pub mod workspace_id;
-pub mod workspace_identifier;
