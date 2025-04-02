@@ -1,0 +1,1 @@
+jj git push -c '@-'
