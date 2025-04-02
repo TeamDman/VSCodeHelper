@@ -90,10 +90,47 @@ pub fn string_holder_derive(input: TokenStream) -> TokenStream {
 
         // FromStr implementation
         impl std::str::FromStr for #struct_name {
-            type Err = <#inner_type as std::str::FromStr>::Err;
+            type Err = eyre::Error;
 
             fn from_str(s: &str) -> Result<Self, Self::Err> {
-                s.parse().map(|v| Self { #inner_ident: v })
+                // s.parse().map(|v| Self { #inner_ident: v })
+                let rc_str = std::rc::Rc::from(s); // Create an Rc<str> from the input &str
+                Ok(Self { #inner_ident: rc_str })
+            }
+        }
+
+        // PartialEq and Eq implementations
+        impl PartialEq for #struct_name {
+            fn eq(&self, other: &Self) -> bool {
+                self.#inner_ident == other.#inner_ident
+            }
+        }
+        impl Eq for #struct_name {}
+        // PartialOrd and Ord implementations
+        impl PartialOrd for #struct_name {
+            fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
+                self.#inner_ident.partial_cmp(&other.#inner_ident)
+            }
+        }
+        impl Ord for #struct_name {
+            fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+                self.#inner_ident.cmp(&other.#inner_ident)
+            }
+        }
+
+        // Hash implementation
+        impl std::hash::Hash for #struct_name {
+            fn hash<H: std::hash::Hasher>(&self, state: &mut H) {
+                self.#inner_ident.hash(state);
+            }
+        }
+
+        // Clone implementation
+        impl Clone for #struct_name {
+            fn clone(&self) -> Self {
+                Self {
+                    #inner_ident: self.#inner_ident.clone(),
+                }
             }
         }
 

@@ -4,6 +4,9 @@ use crate::backup_workspaces::BackupWorkspaces;
 use crate::color::Color;
 use crate::machine_id::MachineId;
 use crate::paths::VSCodePath;
+use crate::profile_associations::ProfileAssociations;
+use crate::telemetry_dev_device_id::TelemetryDevDeviceId;
+use crate::telemetry_sqm_id::TelemetrySqmId;
 use crate::theme::Theme;
 use crate::window_splash::WindowSplash;
 use crate::windows_state::WindowsState;
@@ -25,6 +28,15 @@ pub struct VSCodeStorageJson {
     pub window_splash: WindowSplash,
     pub window_control_height: u32,
     pub backup_workspaces: BackupWorkspaces,
+    pub user_data_profiles_migration: bool,
+    pub profile_associations: ProfileAssociations,
+    pub profile_associations_migration: bool,
+    #[serde(rename = "window.experimental.useSandbox")]
+    pub window_experimental_use_sandbox: bool,
+    #[serde(rename = "telemetry.sqmId")]
+    pub telemetry_sqm_id: TelemetrySqmId,
+    #[serde(rename = "telemetry.devDeviceId")]
+    pub telemetry_dev_device_id: TelemetryDevDeviceId,
 }
 
 impl VSCodeStorageJson {

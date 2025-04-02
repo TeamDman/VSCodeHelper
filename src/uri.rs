@@ -1,11 +1,11 @@
-use std::path::PathBuf;
+use std::{path::PathBuf, rc::Rc};
 
 use eyre::bail;
 use vscodehelper_macros::StringHolder;
 
 #[derive(StringHolder)]
 pub struct Uri {
-    pub inner: String,
+    pub inner: Rc<str>,
 }
 impl Uri {
     pub fn as_path(&self) -> eyre::Result<PathBuf> {

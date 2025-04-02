@@ -15,3 +15,7 @@ pub mod workspace_id;
 pub mod folder;
 pub mod empty_window;
 pub mod backup_folder_id;
+pub mod profile_associations;
+pub mod profile_dunder;
+pub mod telemetry_sqm_id;
+pub mod telemetry_dev_device_id;

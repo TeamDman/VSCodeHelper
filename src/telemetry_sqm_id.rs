@@ -3,6 +3,6 @@ use std::rc::Rc;
 use vscodehelper_macros::StringHolder;
 
 #[derive(StringHolder)]
-pub struct WorkspaceId {
+pub struct TelemetrySqmId {
     pub inner: Rc<str>,
 }
