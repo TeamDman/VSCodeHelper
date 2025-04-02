@@ -1,0 +1,1 @@
+code -a "$Env:APPDATA\Code"
