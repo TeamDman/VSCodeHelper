@@ -84,6 +84,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "common"
+version = "0.1.0"
+dependencies = [
+ "color-eyre",
+ "eyre",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "eyre"
 version = "0.6.12"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -431,12 +441,20 @@ checksum = "ba73ea9cf16a25df0c8caa16c51acb937d5712a8429db78a3ee29d5dcacd3a65"
 name = "vscodehelper"
 version = "0.1.0"
 dependencies = [
- "color-eyre",
+ "common",
  "eyre",
  "serde",
  "serde_json",
  "tracing",
- "tracing-subscriber",
+ "vscodehelper-macros",
+]
+
+[[package]]
+name = "vscodehelper-macros"
+version = "0.1.0"
+dependencies = [
+ "quote",
+ "syn",
 ]
 
 [[package]]

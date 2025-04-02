@@ -1,6 +1,16 @@
+cargo-features=["test-dummy-unstable"]
+
 [package]
 name = "vscodehelper-macros"
 version = "0.1.0"
 edition = "2024"
+im-a-teapot = false
+
+
+[lib]
+crate-type = ["proc-macro"]
+
 
 [dependencies]
+quote = "1.0.40"
+syn = "2.0.100"

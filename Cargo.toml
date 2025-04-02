@@ -8,7 +8,7 @@ eyre = "0.6.12"
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.140"
 tracing = "0.1.41"
+vscodehelper-macros = { version = "0.1.0", path = "vscodehelper-macros" }
 
 [dev-dependencies]
-color-eyre = "0.6.3"
-tracing-subscriber = { version = "0.3.19", features = ["fmt", "env-filter"] }
+common = { path = "examples/common" }

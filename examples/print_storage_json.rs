@@ -1,10 +1,10 @@
-use vs_code_helper::storage_json::VSCodeStorageJson;
+use vscodehelper::storage_json::VSCodeStorageJson;
 
-include!("./common.rs");
 
 pub fn main() -> eyre::Result<()> {
-    init()?;
+    common::init()?;
     let storage_json = VSCodeStorageJson::load_from_disk()?;
-    println!("Telemetry Machine ID: {}", storage_json.telemetry_machine_id);
+    dbg!(&storage_json);
+    println!("The active theme is {theme}", theme = storage_json.theme);
     Ok(())
 }

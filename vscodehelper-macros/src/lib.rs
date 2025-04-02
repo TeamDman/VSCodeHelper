@@ -1,30 +1,31 @@
-
 use proc_macro::TokenStream;
-use quote::{quote, ToTokens};
-use syn::{
-    parse_macro_input,
-    DataStruct, FieldsNamed, Ident, Type,
-};
+use quote::quote;
+use syn::DataStruct;
+use syn::Fields;
+use syn::parse_macro_input;
 
-#[proc_macro_derive(StringImpls)]
-pub fn string_impls_derive(input: TokenStream) -> TokenStream {
+#[proc_macro_derive(StringHolder)]
+pub fn string_holder_derive(input: TokenStream) -> TokenStream {
     let ast = parse_macro_input!(input as syn::DeriveInput);
-    
+
     // Get the struct name
     let struct_name = &ast.ident;
-    
+
     // Get the field name (assuming it's a single field named "inner")
     let fields = if let syn::Data::Struct(DataStruct {
-        fields: FieldsNamed { named, .. },
+        fields: Fields::Named(named),
         ..
-    }) = ast.data {
+    }) = ast.data
+    {
         named
     } else {
         panic!("Only structs with named fields are supported");
     };
 
     // Get the type of the "inner" field
-    let inner_field = fields.first()
+    let inner_field = fields
+        .named
+        .first()
         .expect("Struct must have at least one field")
         .clone();
     let inner_ident = inner_field.ident.expect("Field must be named");

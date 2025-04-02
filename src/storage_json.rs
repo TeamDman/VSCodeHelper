@@ -2,15 +2,21 @@ use std::path::PathBuf;
 
 use crate::machine_id::MachineId;
 use crate::paths::VSCodePath;
+use crate::theme::Theme;
+use crate::theme_background::ThemeBackground;
+use crate::windows_state::WindowsState;
 use serde::Deserialize;
 use serde::Serialize;
 use tracing::debug;
 
 #[derive(Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
 pub struct VSCodeStorageJson {
     #[serde(rename = "telemetry.machineId")]
     pub telemetry_machine_id: MachineId,
     pub theme: Theme,
+    pub theme_background: ThemeBackground,
+    pub windows_state: WindowsState,
 }
 
 impl VSCodeStorageJson {
