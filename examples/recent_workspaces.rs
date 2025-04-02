@@ -9,7 +9,7 @@ pub fn main() -> eyre::Result<()> {
         .keys()
         .collect::<Vec<_>>();
     println!("You've visited at some point:");
-    for workspace in recent_workspaces.iter().take(5) {
+    for workspace in &recent_workspaces {
         println!("  - {workspace}");
     }
     Ok(())

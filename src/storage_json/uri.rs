@@ -13,7 +13,10 @@ impl Uri {
         let Some(x) = self.inner.strip_prefix("file:///") else {
             bail!("Invalid URI format, expected it to start with 'file:///', got {self:?}");
         };
-        let path = PathBuf::from(x);
+        let path_unescaped = percent_encoding::percent_decode(x.as_bytes())
+            .decode_utf8()
+            .map_err(|_| eyre::eyre!("Failed to decode URI"))?;
+        let path = PathBuf::from(path_unescaped.to_string());
         Ok(path)
     }
 }

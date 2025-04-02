@@ -16,6 +16,7 @@ vscodehelper-macros = { version = "0.1.0", path = "vscodehelper-macros" }
 diesel = { version = "2.2.0", features = ["sqlite", "returning_clauses_for_sqlite_3_35"] }
 libsqlite3-sys = { version = "0.30", features = ["bundled"] }
 dotenvy = "0.15"
+percent-encoding = "2.3.1"
 
 [dev-dependencies]
 common = { path = "examples/common" }
