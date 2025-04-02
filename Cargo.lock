@@ -454,6 +454,7 @@ name = "vscodehelper-macros"
 version = "0.1.0"
 dependencies = [
  "quote",
+ "serde",
  "syn",
 ]
 

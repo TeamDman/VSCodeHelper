@@ -5,6 +5,7 @@ struct MyStringWrapper {
     inner: String,
 }
 
+#[test]
 fn main() {
     let wrapper = MyStringWrapper::new("Hello, world!".to_string());
 

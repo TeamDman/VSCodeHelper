@@ -8,9 +8,12 @@ im-a-teapot = false
 
 
 [lib]
-crate-type = ["proc-macro"]
+proc-macro = true
 
 
 [dependencies]
 quote = "1.0.40"
 syn = "2.0.100"
+
+[dev-dependencies]
+serde = "1.0.219" # the crates that depend on this crate will also need to depend on serde I think lol
