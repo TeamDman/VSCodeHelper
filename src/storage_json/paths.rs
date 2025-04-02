@@ -22,7 +22,7 @@ impl TryFrom<VSCodePath> for PathBuf {
             }
             VSCodePath::StorageJson => {
                 let app_data: PathBuf = VSCodePath::AppData.try_into()?;
-                Ok(PathBuf::from(app_data)
+                Ok(app_data
                     .join("Code")
                     .join("User")
                     .join("globalStorage")
@@ -30,7 +30,7 @@ impl TryFrom<VSCodePath> for PathBuf {
             }
             VSCodePath::StateVscdb => {
                 let app_data: PathBuf = VSCodePath::AppData.try_into()?;
-                Ok(PathBuf::from(app_data)
+                Ok(app_data
                     .join("Code")
                     .join("User")
                     .join("globalStorage")

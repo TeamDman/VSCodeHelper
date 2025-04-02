@@ -1,4 +1,5 @@
-use std::{path::PathBuf, rc::Rc};
+use std::path::PathBuf;
+use std::rc::Rc;
 
 use eyre::bail;
 use vscodehelper_macros::StringHolder;

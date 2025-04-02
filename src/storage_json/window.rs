@@ -1,9 +1,9 @@
-use std::path::PathBuf;
-use serde::Deserialize;
-use serde::Serialize;
-use crate::storage_json::uri::Uri;
 use super::ui_state::UiState;
 use super::workspace_identifier::WorkspaceIdentifier;
+use crate::storage_json::uri::Uri;
+use serde::Deserialize;
+use serde::Serialize;
+use std::path::PathBuf;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(untagged)]

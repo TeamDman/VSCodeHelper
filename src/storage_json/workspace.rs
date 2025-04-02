@@ -8,6 +8,6 @@ use crate::storage_json::workspace_id::WorkspaceId;
 #[serde(rename_all = "camelCase")]
 pub struct Workspace {
     pub id: WorkspaceId,
-    #[serde(rename="configURIPath")]
+    #[serde(rename = "configURIPath")]
     pub config_uri_path: Uri,
 }

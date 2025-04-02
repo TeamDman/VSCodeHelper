@@ -12,8 +12,8 @@ fn main() {
     let wrapper = MyStringWrapper::new("Hello, world!".to_string());
 
     // All the implementations are available:
-    println!("{}", wrapper);  // Uses Display trait
-    println!("{:?}", wrapper);  // Uses Debug trait
+    println!("{}", wrapper); // Uses Display trait
+    println!("{:?}", wrapper); // Uses Debug trait
 
     let string_value: String = wrapper.to_string();
     let wrapper_from_str = "test".parse::<MyStringWrapper>().unwrap();
