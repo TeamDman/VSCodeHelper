@@ -1,9 +1,10 @@
 use std::path::PathBuf;
 
+use crate::backup_workspaces::BackupWorkspaces;
+use crate::color::Color;
 use crate::machine_id::MachineId;
 use crate::paths::VSCodePath;
 use crate::theme::Theme;
-use crate::color::Color;
 use crate::window_splash::WindowSplash;
 use crate::windows_state::WindowsState;
 use serde::Deserialize;
@@ -19,9 +20,11 @@ pub struct VSCodeStorageJson {
     pub theme_background: Color,
     pub windows_state: WindowsState,
     pub picker_working_dir: PathBuf,
-    #[serde(rename="quit.from.restart")]
+    #[serde(rename = "quit.from.restart")]
     pub quit_from_restart: bool,
     pub window_splash: WindowSplash,
+    pub window_control_height: u32,
+    pub backup_workspaces: BackupWorkspaces,
 }
 
 impl VSCodeStorageJson {
