@@ -1,8 +1,10 @@
+use std::rc::Rc;
+
 use vscodehelper_macros::StringHolder;
 
 #[derive(StringHolder)]
 struct MyStringWrapper {
-    inner: String,
+    inner: Rc<str>,
 }
 
 #[test]
@@ -13,7 +15,7 @@ fn main() {
     println!("{}", wrapper);  // Uses Display trait
     println!("{:?}", wrapper);  // Uses Debug trait
 
-    let string_value: String = wrapper.into();
+    let string_value: String = wrapper.to_string();
     let wrapper_from_str = "test".parse::<MyStringWrapper>().unwrap();
     println!("{}", string_value);
     println!("{:?}", wrapper_from_str);

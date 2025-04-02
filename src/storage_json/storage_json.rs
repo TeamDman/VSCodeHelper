@@ -1,15 +1,15 @@
 use std::path::PathBuf;
 
-use crate::backup_workspaces::BackupWorkspaces;
-use crate::color::Color;
-use crate::machine_id::MachineId;
-use crate::paths::VSCodePath;
-use crate::profile_associations::ProfileAssociations;
-use crate::telemetry_dev_device_id::TelemetryDevDeviceId;
-use crate::telemetry_sqm_id::TelemetrySqmId;
-use crate::theme::Theme;
-use crate::window_splash::WindowSplash;
-use crate::windows_state::WindowsState;
+use crate::storage_json::backup_workspaces::BackupWorkspaces;
+use crate::storage_json::color::Color;
+use crate::storage_json::machine_id::MachineId;
+use crate::storage_json::paths::VSCodePath;
+use crate::storage_json::profile_associations::ProfileAssociations;
+use crate::storage_json::telemetry_dev_device_id::TelemetryDevDeviceId;
+use crate::storage_json::telemetry_sqm_id::TelemetrySqmId;
+use crate::storage_json::theme::Theme;
+use crate::storage_json::window_splash::WindowSplash;
+use crate::storage_json::windows_state::WindowsState;
 use serde::Deserialize;
 use serde::Serialize;
 use tracing::debug;

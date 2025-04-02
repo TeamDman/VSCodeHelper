@@ -1,10 +1,9 @@
+use crate::storage_json::backup_folder_id::BackupFolderId;
 use serde::Deserialize;
 use serde::Serialize;
 
-use crate::uri::Uri;
-
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Folder {
-    pub folder_uri: Uri,
+pub struct EmptyWindow {
+    pub backup_folder: BackupFolderId,
 }

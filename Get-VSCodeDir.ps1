@@ -1,0 +1,1 @@
+Write-Output "$Env:APPDATA\Code"

@@ -1,4 +1,4 @@
-use crate::color::Color;
+use crate::storage_json::color::Color;
 use serde::Deserialize;
 use serde::Serialize;
 

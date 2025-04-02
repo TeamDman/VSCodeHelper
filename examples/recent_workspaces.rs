@@ -1,4 +1,4 @@
-use vscodehelper::storage_json::VSCodeStorageJson;
+use vscodehelper::storage_json::storage_json::VSCodeStorageJson;
 
 pub fn main() -> eyre::Result<()> {
     common::init()?;

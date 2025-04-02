@@ -453,6 +453,7 @@ dependencies = [
 name = "vscodehelper-macros"
 version = "0.1.0"
 dependencies = [
+ "eyre",
  "quote",
  "serde",
  "syn",

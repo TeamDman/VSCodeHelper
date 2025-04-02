@@ -34,8 +34,8 @@ pub fn string_holder_derive(input: TokenStream) -> TokenStream {
     // Generate all the trait implementations
     let expanded = quote! {
         impl #struct_name {
-            pub fn new(value: #inner_type) -> Self {
-                Self { #inner_ident: value }
+            pub fn new(value: impl Into<#inner_type>) -> Self {
+                Self { #inner_ident: value.into() }
             }
         }
 

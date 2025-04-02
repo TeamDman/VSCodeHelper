@@ -1,9 +1,9 @@
 use serde::Deserialize;
 use serde::Serialize;
 
-use crate::empty_window::EmptyWindow;
-use crate::folder::Folder;
-use crate::workspace::Workspace;
+use crate::storage_json::empty_window::EmptyWindow;
+use crate::storage_json::folder::Folder;
+use crate::storage_json::workspace::Workspace;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]

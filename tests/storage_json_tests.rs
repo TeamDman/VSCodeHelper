@@ -1,4 +1,4 @@
-use vscodehelper::storage_json::VSCodeStorageJson;
+use vscodehelper::storage_json::storage_json::VSCodeStorageJson;
 
 #[test]
 fn test_parse_storage_json() -> eyre::Result<()> {

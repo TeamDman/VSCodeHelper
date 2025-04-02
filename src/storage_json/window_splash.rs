@@ -1,6 +1,6 @@
-use crate::color_info::ColorInfo;
-use crate::layout_info::LayoutInfo;
-use crate::theme::Theme;
+use crate::storage_json::color_info::ColorInfo;
+use crate::storage_json::layout_info::LayoutInfo;
+use crate::storage_json::theme::Theme;
 use serde::Deserialize;
 use serde::Serialize;
 
