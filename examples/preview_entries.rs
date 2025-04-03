@@ -8,7 +8,11 @@ pub fn main() -> eyre::Result<()> {
         println!(
             "{key} = {value}",
             key = entry.key,
-            value = entry.value_as_string()?.chars().take(100).collect::<String>()
+            value = entry
+                .value_as_string()?
+                .chars()
+                .take(100)
+                .collect::<String>()
         );
     }
     Ok(())

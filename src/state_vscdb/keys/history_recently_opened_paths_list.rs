@@ -43,9 +43,8 @@ impl HasWorkspacePath for Workspace {
 
 #[cfg(test)]
 mod test {
-    use crate::state_vscdb::state_vscdb::VSCodeStateVscdb;
-
     use super::HistoryRecentlyOpenedPathsListKey;
+    use crate::state_vscdb::VSCodeStateVscdb;
 
     #[test]
     fn it_works() -> eyre::Result<()> {
