@@ -649,7 +649,7 @@ dependencies = [
  "serde",
  "serde_json",
  "tracing",
- "vscodehelper-macros",
+ "vscodehelper-macros 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]
@@ -659,6 +659,16 @@ dependencies = [
  "eyre",
  "quote",
  "serde",
+ "syn",
+]
+
+[[package]]
+name = "vscodehelper-macros"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "12e6344d233d73eefc5e0280b3224d7c87862782880400a9addd42329ae7b07b"
+dependencies = [
+ "quote",
  "syn",
 ]
 
