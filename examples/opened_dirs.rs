@@ -1,5 +1,5 @@
 use tracing::warn;
-use vscodehelper::storage_json::storage_json::VSCodeStorageJson;
+use vscodehelper::storage_json::VSCodeStorageJson;
 use vscodehelper::storage_json::window::Window;
 use vscodehelper::workspace_json::HasWorkspacePath;
 

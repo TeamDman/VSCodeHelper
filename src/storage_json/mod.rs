@@ -11,7 +11,7 @@ pub mod profile_associations;
 pub mod profile_dunder;
 pub mod side;
 #[allow(clippy::module_inception)]
-pub mod storage_json;
+mod storage_json;
 pub mod telemetry_dev_device_id;
 pub mod telemetry_sqm_id;
 pub mod theme;
