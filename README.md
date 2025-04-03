@@ -87,11 +87,8 @@ fn main() -> eyre::Result<()> {
 
 ## Installation
 
-Add this to your `Cargo.toml`:
-
-```toml
-[dependencies]
-vscodehelper = {git="https://github.com/TeamDman/VSCodeHelper"}
+```pwsh
+cargo add vscodehelper
 ```
 
 ## Requirements

@@ -22,3 +22,5 @@ pub mod window_splash;
 pub mod windows_state;
 pub mod workspace;
 pub mod workspace_id;
+
+pub use storage_json::VSCodeStorageJson;

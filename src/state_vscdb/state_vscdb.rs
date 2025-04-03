@@ -7,10 +7,10 @@ use crate::storage_json::paths::VSCodePath;
 use diesel::SqliteConnection;
 use diesel::prelude::*;
 
-pub struct StateVscdb {
+pub struct VSCodeStateVscdb {
     pub connection: SqliteConnection,
 }
-impl StateVscdb {
+impl VSCodeStateVscdb {
     pub fn new(connection: SqliteConnection) -> Self {
         Self { connection }
     }
@@ -32,8 +32,6 @@ impl StateVscdb {
             .load::<Item>(&mut self.connection)?;
         Ok(entries)
     }
-}
-impl StateVscdb {
     pub fn read<K: Key>(&mut self) -> eyre::Result<K::Value> {
         let item = ItemTable
             .filter(key.eq(K::KEY))

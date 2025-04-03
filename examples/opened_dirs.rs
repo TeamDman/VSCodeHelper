@@ -1,5 +1,6 @@
 use vscodehelper::storage_json::storage_json::VSCodeStorageJson;
 use vscodehelper::storage_json::window::Window;
+use vscodehelper::storage_json::workspace::HasWorkspacePath;
 
 pub fn main() -> eyre::Result<()> {
     common::init()?;
