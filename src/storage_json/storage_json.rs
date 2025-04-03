@@ -10,6 +10,8 @@ use crate::storage_json::telemetry_sqm_id::TelemetrySqmId;
 use crate::storage_json::theme::Theme;
 use crate::storage_json::window_splash::WindowSplash;
 use crate::storage_json::windows_state::WindowsState;
+use eyre::Context;
+use eyre::eyre;
 use serde::Deserialize;
 use serde::Serialize;
 use tracing::debug;
@@ -43,8 +45,9 @@ impl VSCodeStorageJson {
     pub fn load_from_disk() -> eyre::Result<Self> {
         let json_path: PathBuf = VSCodePath::StorageJson.try_into()?;
         debug!("Trying to load storage json from: {}", json_path.display());
-        let json = std::fs::read_to_string(json_path)?;
-        let storage_json: Self = serde_json::from_str(&json)?;
+        let json = std::fs::read_to_string(&json_path)?;
+        let storage_json: Self =
+            serde_json::from_str(&json).wrap_err(eyre!("Reading {}", json_path.display()))?;
         Ok(storage_json)
     }
 }

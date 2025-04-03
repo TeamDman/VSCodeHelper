@@ -5,8 +5,8 @@ use serde::Serialize;
 #[serde(rename_all = "camelCase")]
 pub struct UiState {
     pub mode: u32,
-    pub x: u32,
-    pub y: u32,
+    pub x: i32,
+    pub y: i32,
     pub width: u32,
     pub height: u32,
     pub zoom_level: Option<u8>,
