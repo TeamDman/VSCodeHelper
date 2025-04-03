@@ -14,9 +14,10 @@ pub fn main() -> eyre::Result<()> {
                 workspace_identifier,
                 ..
             } => {
-                let workspace_json = workspace_identifier.read()?;
-                for folder in workspace_json.folders {
-                    println!("{}", folder.path.display());
+                if let Ok(workspace_json) = workspace_identifier.read() {
+                    for folder in workspace_json.folders {
+                        println!("{}", folder.path.display());
+                    }
                 }
             }
         }
