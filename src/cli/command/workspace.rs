@@ -2,7 +2,6 @@ use crate::cli::to_args::ToArgs;
 use crate::state_vscdb::keys::history_recently_opened_paths_list::Entry;
 use crate::state_vscdb::well_known_keys;
 use crate::state_vscdb::VSCodeStateVscdb;
-use crate::storage_json::uri::Uri;
 use arbitrary::Arbitrary;
 use clap::Args;
 use clap::Subcommand;
@@ -51,11 +50,7 @@ impl WorkspaceArgs {
                                 Entry::File { file_uri } => file_uri,
                                 Entry::Workspace { workspace } => workspace.config_path,
                             };
-                            match uri {
-                                Uri::LocalPath(path) => println!("{}", path.display()),
-                                Uri::VsCodeRemotePath(s) => println!("{}", s),
-                                Uri::Unknown(s) => println!("{}", s),
-                            }
+                            println!("{}", uri);
                         }
                     }
                     OutputFormat::PrettyJson => {
@@ -79,12 +74,12 @@ impl ToArgs for WorkspaceArgs {
                 args.push("list".into());
                 args.push("--output-format".into());
                 args.push(
-                    match list_args.output_format {
-                        OutputFormat::Plain => "plain",
-                        OutputFormat::PrettyJson => "pretty-json",
-                        OutputFormat::Json => "json",
-                    }
-                    .into(),
+                    list_args
+                        .output_format
+                        .to_possible_value()
+                        .expect("ValueEnum should have a value")
+                        .get_name()
+                        .into(),
                 );
             }
         }

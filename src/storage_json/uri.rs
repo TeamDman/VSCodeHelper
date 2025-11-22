@@ -19,6 +19,36 @@ impl Uri {
             Uri::Unknown(s) => bail!("URI is unknown: {}", s),
         }
     }
+
+    pub fn protocol(&self) -> &'static str {
+        match self {
+            Uri::LocalPath(_) => "file",
+            Uri::VsCodeRemotePath(_) => "vscode-remote",
+            Uri::Unknown(_) => "unknown",
+        }
+    }
+}
+
+impl std::fmt::Display for Uri {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Uri::LocalPath(path) => {
+                // Best effort serialization to VSCode URI format
+                let path_str = path.to_string_lossy().replace('\\', "/");
+                // Encode special characters if needed, but for now simple replacement
+                // VSCode tends to encode ':' as '%3A' for drive letters
+                if let Some(colon_idx) = path_str.find(':') {
+                    let (drive, rest) = path_str.split_at(colon_idx);
+                    // rest starts with ':'
+                    write!(f, "file:///{}{}{}", drive, "%3A", &rest[1..])
+                } else {
+                    write!(f, "file:///{}", path_str)
+                }
+            }
+            Uri::VsCodeRemotePath(s) => write!(f, "{}", s),
+            Uri::Unknown(s) => write!(f, "{}", s),
+        }
+    }
 }
 
 impl TryFrom<Uri> for PathBuf {
@@ -34,24 +64,7 @@ impl Serialize for Uri {
     where
         S: serde::Serializer,
     {
-        match self {
-            Uri::LocalPath(path) => {
-                // Best effort serialization to VSCode URI format
-                let path_str = path.to_string_lossy().replace('\\', "/");
-                // Encode special characters if needed, but for now simple replacement
-                // VSCode tends to encode ':' as '%3A' for drive letters
-                let uri = if let Some(colon_idx) = path_str.find(':') {
-                    let (drive, rest) = path_str.split_at(colon_idx);
-                    // rest starts with ':'
-                    format!("file:///{}{}{}", drive, "%3A", &rest[1..])
-                } else {
-                    format!("file:///{}", path_str)
-                };
-                serializer.serialize_str(&uri)
-            }
-            Uri::VsCodeRemotePath(s) => serializer.serialize_str(s),
-            Uri::Unknown(s) => serializer.serialize_str(s),
-        }
+        serializer.serialize_str(&self.to_string())
     }
 }
 
