@@ -2,28 +2,75 @@ use std::path::PathBuf;
 use std::rc::Rc;
 
 use eyre::bail;
-use vscodehelper_macros::StringHolder;
+use serde::{Deserialize, Serialize};
 
-#[derive(StringHolder)]
-pub struct Uri {
-    pub inner: Rc<str>,
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum Uri {
+    LocalPath(PathBuf),
+    VsCodeRemotePath(Rc<str>),
+    Unknown(Rc<str>),
 }
+
 impl Uri {
     pub fn as_path(&self) -> eyre::Result<PathBuf> {
-        let Some(x) = self.inner.strip_prefix("file:///") else {
-            bail!("Invalid URI format, expected it to start with 'file:///', got {self:?}");
-        };
-        let path_unescaped = percent_encoding::percent_decode(x.as_bytes())
-            .decode_utf8()
-            .map_err(|_| eyre::eyre!("Failed to decode URI"))?;
-        let path = PathBuf::from(path_unescaped.to_string());
-        Ok(path)
+        match self {
+            Uri::LocalPath(path) => Ok(path.clone()),
+            Uri::VsCodeRemotePath(s) => bail!("URI is a remote path: {}", s),
+            Uri::Unknown(s) => bail!("URI is unknown: {}", s),
+        }
     }
 }
+
 impl TryFrom<Uri> for PathBuf {
     type Error = eyre::Error;
 
     fn try_from(value: Uri) -> Result<Self, Self::Error> {
         value.as_path()
+    }
+}
+
+impl Serialize for Uri {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        match self {
+            Uri::LocalPath(path) => {
+                // Best effort serialization to VSCode URI format
+                let path_str = path.to_string_lossy().replace('\\', "/");
+                // Encode special characters if needed, but for now simple replacement
+                // VSCode tends to encode ':' as '%3A' for drive letters
+                let uri = if let Some(colon_idx) = path_str.find(':') {
+                    let (drive, rest) = path_str.split_at(colon_idx);
+                    // rest starts with ':'
+                    format!("file:///{}{}{}", drive, "%3A", &rest[1..])
+                } else {
+                    format!("file:///{}", path_str)
+                };
+                serializer.serialize_str(&uri)
+            }
+            Uri::VsCodeRemotePath(s) => serializer.serialize_str(s),
+            Uri::Unknown(s) => serializer.serialize_str(s),
+        }
+    }
+}
+
+impl<'de> Deserialize<'de> for Uri {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+    where
+        D: serde::Deserializer<'de>,
+    {
+        let s = String::deserialize(deserializer)?;
+        if let Some(stripped) = s.strip_prefix("file:///") {
+            let path_unescaped = percent_encoding::percent_decode(stripped.as_bytes())
+                .decode_utf8()
+                .map_err(serde::de::Error::custom)?;
+            let path = PathBuf::from(path_unescaped.to_string());
+            Ok(Uri::LocalPath(path))
+        } else if s.starts_with("vscode-remote://") {
+            Ok(Uri::VsCodeRemotePath(Rc::from(s)))
+        } else {
+            Ok(Uri::Unknown(Rc::from(s)))
+        }
     }
 }
