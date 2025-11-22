@@ -2,6 +2,9 @@ use std::path::PathBuf;
 use std::rc::Rc;
 
 use eyre::bail;
+use percent_encoding::AsciiSet;
+use percent_encoding::CONTROLS;
+use percent_encoding::utf8_percent_encode;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -42,7 +45,7 @@ impl Serialize for Uri {
 
                 // Define characters that need to be encoded in file URIs
                 // Encode everything except alphanumeric, forward slash, and some safe chars
-                const PATH_SEGMENT: &percent_encoding::AsciiSet = &percent_encoding::CONTROLS
+                const PATH_SEGMENT: &AsciiSet = &CONTROLS
                     .add(b' ')
                     .add(b'"')
                     .add(b'#')
@@ -56,8 +59,7 @@ impl Serialize for Uri {
                     .add(b':');
 
                 // Encode the path, then construct the file:// URI
-                let encoded =
-                    percent_encoding::utf8_percent_encode(&path_str, PATH_SEGMENT).to_string();
+                let encoded = utf8_percent_encode(&path_str, PATH_SEGMENT).to_string();
                 let uri = format!("file:///{}", encoded);
                 serializer.serialize_str(&uri)
             }
