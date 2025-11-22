@@ -2,7 +2,8 @@ use std::path::PathBuf;
 use std::rc::Rc;
 
 use eyre::bail;
-use serde::{Deserialize, Serialize};
+use serde::Deserialize;
+use serde::Serialize;
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Uri {
@@ -36,17 +37,28 @@ impl Serialize for Uri {
     {
         match self {
             Uri::LocalPath(path) => {
-                // Best effort serialization to VSCode URI format
+                // Serialize to VSCode URI format with proper percent encoding
                 let path_str = path.to_string_lossy().replace('\\', "/");
-                // Encode special characters if needed, but for now simple replacement
-                // VSCode tends to encode ':' as '%3A' for drive letters
-                let uri = if let Some(colon_idx) = path_str.find(':') {
-                    let (drive, rest) = path_str.split_at(colon_idx);
-                    // rest starts with ':'
-                    format!("file:///{}{}{}", drive, "%3A", &rest[1..])
-                } else {
-                    format!("file:///{}", path_str)
-                };
+
+                // Define characters that need to be encoded in file URIs
+                // Encode everything except alphanumeric, forward slash, and some safe chars
+                const PATH_SEGMENT: &percent_encoding::AsciiSet = &percent_encoding::CONTROLS
+                    .add(b' ')
+                    .add(b'"')
+                    .add(b'#')
+                    .add(b'<')
+                    .add(b'>')
+                    .add(b'?')
+                    .add(b'`')
+                    .add(b'{')
+                    .add(b'}')
+                    .add(b'%')
+                    .add(b':');
+
+                // Encode the path, then construct the file:// URI
+                let encoded =
+                    percent_encoding::utf8_percent_encode(&path_str, PATH_SEGMENT).to_string();
+                let uri = format!("file:///{}", encoded);
                 serializer.serialize_str(&uri)
             }
             Uri::VsCodeRemotePath(s) => serializer.serialize_str(s),
@@ -72,5 +84,56 @@ impl<'de> Deserialize<'de> for Uri {
         } else {
             Ok(Uri::Unknown(Rc::from(s)))
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use serde_json;
+
+    #[test]
+    fn test_uri_round_trip_with_spaces() {
+        let original = Uri::LocalPath(PathBuf::from("C:/Program Files/VSCode/test.txt"));
+        let serialized = serde_json::to_string(&original).unwrap();
+        let deserialized: Uri = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(original, deserialized);
+        assert!(serialized.contains("%20")); // Space should be encoded
+    }
+
+    #[test]
+    fn test_uri_round_trip_with_hash() {
+        let original = Uri::LocalPath(PathBuf::from("C:/path#with#hash/file.txt"));
+        let serialized = serde_json::to_string(&original).unwrap();
+        let deserialized: Uri = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(original, deserialized);
+        assert!(serialized.contains("%23")); // Hash should be encoded
+    }
+
+    #[test]
+    fn test_uri_round_trip_with_question() {
+        let original = Uri::LocalPath(PathBuf::from("C:/path?with?question/file.txt"));
+        let serialized = serde_json::to_string(&original).unwrap();
+        let deserialized: Uri = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(original, deserialized);
+        assert!(serialized.contains("%3F")); // Question mark should be encoded
+    }
+
+    #[test]
+    fn test_uri_round_trip_with_colon() {
+        let original = Uri::LocalPath(PathBuf::from("C:/normal/path/file.txt"));
+        let serialized = serde_json::to_string(&original).unwrap();
+        let deserialized: Uri = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(original, deserialized);
+        assert!(serialized.contains("%3A")); // Colon should be encoded
+    }
+
+    #[test]
+    fn test_uri_round_trip_unix_path() {
+        let original = Uri::LocalPath(PathBuf::from("/home/user/with spaces/file.txt"));
+        let serialized = serde_json::to_string(&original).unwrap();
+        let deserialized: Uri = serde_json::from_str(&serialized).unwrap();
+        assert_eq!(original, deserialized);
+        assert!(serialized.contains("%20")); // Space should be encoded
     }
 }
