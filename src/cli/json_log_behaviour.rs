@@ -2,8 +2,7 @@ use std::borrow::Cow;
 use std::path::PathBuf;
 use std::str::FromStr;
 
-#[derive(Debug, Clone, PartialEq)]
-#[derive(Default)]
+#[derive(Debug, Clone, PartialEq, Default)]
 pub enum JsonLogBehaviour {
     #[default]
     None,
@@ -25,7 +24,6 @@ impl JsonLogBehaviour {
         }
     }
 }
-
 
 impl FromStr for JsonLogBehaviour {
     type Err = std::convert::Infallible;
