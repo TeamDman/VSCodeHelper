@@ -66,17 +66,15 @@ pub fn init_tracing(level: impl Into<Directive>, json_behaviour: JsonLogBehaviou
         }
 
         info!(?json_log_path, "JSON log output initialized");
-    } else {
-        if let Err(error) = tracing_subscriber::registry()
-            .with(env_filter)
-            .with(stderr_layer)
-            .try_init()
-        {
-            eprintln!(
-                "Failed to initialize tracing subscriber - are you running `cargo test`? If so, multiple test entrypoints may be running from the same process. https://github.com/tokio-rs/console/issues/505 : {error}"
-            );
-            return Ok(());
-        }
+    } else if let Err(error) = tracing_subscriber::registry()
+        .with(env_filter)
+        .with(stderr_layer)
+        .try_init()
+    {
+        eprintln!(
+            "Failed to initialize tracing subscriber - are you running `cargo test`? If so, multiple test entrypoints may be running from the same process. https://github.com/tokio-rs/console/issues/505 : {error}"
+        );
+        return Ok(());
     }
 
     Ok(())

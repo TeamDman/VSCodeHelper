@@ -3,7 +3,9 @@ use std::path::PathBuf;
 use std::str::FromStr;
 
 #[derive(Debug, Clone, PartialEq)]
+#[derive(Default)]
 pub enum JsonLogBehaviour {
+    #[default]
     None,
     Some(PathBuf),
     SomeAutomaticPath,
@@ -24,11 +26,6 @@ impl JsonLogBehaviour {
     }
 }
 
-impl Default for JsonLogBehaviour {
-    fn default() -> Self {
-        JsonLogBehaviour::None
-    }
-}
 
 impl FromStr for JsonLogBehaviour {
     type Err = std::convert::Infallible;
