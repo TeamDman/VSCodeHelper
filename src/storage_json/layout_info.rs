@@ -11,7 +11,7 @@ pub struct LayoutInfo {
     pub title_bar_height: u32,
     pub activity_bar_width: u32,
     pub side_bar_width: u32,
-    pub auxiliary_side_bar_width: u32,
+    pub auxiliary_side_bar_width: Option<u32>,
     pub status_bar_height: u32,
     pub window_border: bool,
 }

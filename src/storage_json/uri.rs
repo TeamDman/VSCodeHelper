@@ -55,15 +55,8 @@ impl std::fmt::Display for Uri {
             Uri::LocalPath(path) => {
                 // Best effort serialization to VSCode URI format
                 let path_str = path.to_string_lossy().replace('\\', "/");
-                // Encode special characters if needed, but for now simple replacement
-                // VSCode tends to encode ':' as '%3A' for drive letters
-                if let Some(colon_idx) = path_str.find(':') {
-                    let (drive, rest) = path_str.split_at(colon_idx);
-                    // rest starts with ':'
-                    write!(f, "file:///{}{}{}", drive, "%3A", &rest[1..])
-                } else {
-                    write!(f, "file:///{}", path_str)
-                }
+                let encoded = utf8_percent_encode(&path_str, PATH_SEGMENT);
+                write!(f, "file:///{}", encoded)
             }
             Uri::VsCodeRemotePath(s) => write!(f, "{}", s),
             Uri::Unknown(s) => write!(f, "{}", s),
