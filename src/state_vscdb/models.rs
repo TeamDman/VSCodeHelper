@@ -13,7 +13,11 @@ pub struct Item {
 impl Item {
     pub fn parse<K: Key>(&self) -> eyre::Result<K::Value> {
         if self.key != K::KEY {
-            return Err(eyre::eyre!("Key mismatch: expected {}, found {}", K::KEY, self.key));
+            return Err(eyre::eyre!(
+                "Key mismatch: expected {}, found {}",
+                K::KEY,
+                self.key
+            ));
         }
         let value = serde_json::from_slice(&self.value)?;
         Ok(value)

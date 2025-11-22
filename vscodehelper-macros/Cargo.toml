@@ -5,6 +5,13 @@ name = "vscodehelper-macros"
 version = "0.1.0"
 edition = "2024"
 im-a-teapot = false
+description = "Macros for vscodehelper crate"
+authors = ["TeamDman"]
+license = "MPL-2.0"
+repository = "https://github.com/TeamDman/VSCodeHelper"
+readme = "../README.md"
+keywords = ["vscode", "vs-code", "windows", "sqlite", "json"]
+categories = ["development-tools"]
 
 
 [lib]

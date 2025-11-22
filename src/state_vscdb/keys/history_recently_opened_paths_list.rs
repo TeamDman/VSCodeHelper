@@ -1,5 +1,6 @@
 use crate::storage_json::uri::Uri;
 use crate::storage_json::workspace_id::WorkspaceId;
+use crate::workspace_json::HasWorkspacePath;
 use serde::Deserialize;
 use serde::Serialize;
 
@@ -34,15 +35,20 @@ pub struct Workspace {
     pub config_path: Uri,
 }
 
+impl HasWorkspacePath for Workspace {
+    fn workspace_path(&self) -> Uri {
+        self.config_path.clone()
+    }
+}
+
 #[cfg(test)]
 mod test {
-    use crate::state_vscdb::state_vscdb::StateVscdb;
-
     use super::HistoryRecentlyOpenedPathsListKey;
+    use crate::state_vscdb::VSCodeStateVscdb;
 
     #[test]
     fn it_works() -> eyre::Result<()> {
-        let mut state_vscdb = StateVscdb::try_default()?;
+        let mut state_vscdb = VSCodeStateVscdb::try_default()?;
         let recently_opened = state_vscdb.read::<HistoryRecentlyOpenedPathsListKey>()?;
         println!("Found {} entries", recently_opened.entries.len());
         Ok(())

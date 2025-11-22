@@ -1,5 +1,7 @@
-use vscodehelper::storage_json::storage_json::VSCodeStorageJson;
+use tracing::warn;
+use vscodehelper::storage_json::VSCodeStorageJson;
 use vscodehelper::storage_json::window::Window;
+use vscodehelper::workspace_json::HasWorkspacePath;
 
 pub fn main() -> eyre::Result<()> {
     common::init()?;
@@ -13,9 +15,15 @@ pub fn main() -> eyre::Result<()> {
                 workspace_identifier,
                 ..
             } => {
-                let workspace_json = workspace_identifier.read()?;
-                for folder in workspace_json.folders {
-                    println!("{}", folder.path.display());
+                if let Ok(workspace_json) = workspace_identifier.read() {
+                    for folder in workspace_json.folders {
+                        println!("{}", folder.path.display());
+                    }
+                } else {
+                    warn!(
+                        "Failed to read workspace json for {}",
+                        workspace_identifier.config_uri_path.as_path()?.display()
+                    );
                 }
             }
         }
