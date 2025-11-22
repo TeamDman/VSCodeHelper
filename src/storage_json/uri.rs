@@ -8,6 +8,22 @@ use percent_encoding::utf8_percent_encode;
 use serde::Deserialize;
 use serde::Serialize;
 
+// Define characters that need to be encoded in file URIs
+// Based on RFC 3986, encodes special characters that have meaning in URIs
+// Forward slashes (/) are preserved as path separators
+const PATH_SEGMENT: &AsciiSet = &CONTROLS
+    .add(b' ')
+    .add(b'"')
+    .add(b'#')
+    .add(b'<')
+    .add(b'>')
+    .add(b'?')
+    .add(b'`')
+    .add(b'{')
+    .add(b'}')
+    .add(b'%')
+    .add(b':');
+
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum Uri {
     LocalPath(PathBuf),
@@ -42,21 +58,6 @@ impl Serialize for Uri {
             Uri::LocalPath(path) => {
                 // Serialize to VSCode URI format with proper percent encoding
                 let path_str = path.to_string_lossy().replace('\\', "/");
-
-                // Define characters that need to be encoded in file URIs
-                // Encode everything except alphanumeric, forward slash, and some safe chars
-                const PATH_SEGMENT: &AsciiSet = &CONTROLS
-                    .add(b' ')
-                    .add(b'"')
-                    .add(b'#')
-                    .add(b'<')
-                    .add(b'>')
-                    .add(b'?')
-                    .add(b'`')
-                    .add(b'{')
-                    .add(b'}')
-                    .add(b'%')
-                    .add(b':');
 
                 // Encode the path, then construct the file:// URI
                 let encoded = utf8_percent_encode(&path_str, PATH_SEGMENT).to_string();
