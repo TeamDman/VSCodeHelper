@@ -1,7 +1,7 @@
 use arbitrary::Arbitrary;
 use clap::Parser;
-use vscodehelper::cli::to_args::ToArgs;
 use vscodehelper::cli::Cli;
+use vscodehelper::cli::to_args::ToArgs;
 
 #[test]
 fn fuzz_cli_args_roundtrip() {

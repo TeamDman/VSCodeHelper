@@ -3,7 +3,6 @@ use crate::state_vscdb::VSCodeStateVscdb;
 use crate::state_vscdb::keys::history_recently_opened_paths_list::Entry;
 use crate::state_vscdb::well_known_keys;
 use crate::storage_json::uri::Uri;
-use crate::state_vscdb::VSCodeStateVscdb;
 use arbitrary::Arbitrary;
 use clap::Args;
 use clap::Subcommand;
