@@ -50,7 +50,7 @@ impl WorkspaceArgs {
                                 Entry::File { file_uri } => file_uri,
                                 Entry::Workspace { workspace } => workspace.config_path,
                             };
-                            println!("{}", uri);
+                            println!("{uri}");
                         }
                     }
                     OutputFormat::PrettyJson => {

@@ -1,5 +1,5 @@
 diesel::table! {
-    #[allow(non_snake_case)]
+    #[expect(non_snake_case, reason = "diesel table name is intentionally PascalCase")]
     ItemTable (key) {
         key -> Text,
         value -> Binary,

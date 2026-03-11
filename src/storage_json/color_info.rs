@@ -14,7 +14,10 @@ pub struct ColorInfo {
     pub activity_bar_border: Color,
     pub side_bar_background: Color,
     pub side_bar_border: Color,
-    pub status_bar_background: Color,
-    pub status_bar_border: Color,
-    pub status_bar_no_folder_background: Color,
+    #[serde(default)]
+    pub status_bar_background: Option<Color>,
+    #[serde(default)]
+    pub status_bar_border: Option<Color>,
+    #[serde(default)]
+    pub status_bar_no_folder_background: Option<Color>,
 }

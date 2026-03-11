@@ -14,10 +14,10 @@ pub struct ChatSessionSummary {
 
 impl ChatSessionSummary {
     pub fn workspace_path_display(&self) -> String {
-        self.workspace_path
-            .as_ref()
-            .map(|path| path.display().to_string())
-            .unwrap_or_else(|| "<unknown-workspace>".to_string())
+        self.workspace_path.as_ref().map_or_else(
+            || "<unknown-workspace>".to_string(),
+            |path| path.display().to_string(),
+        )
     }
 }
 

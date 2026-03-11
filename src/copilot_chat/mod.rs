@@ -4,8 +4,8 @@ use crate::copilot_chat::models::ChatSessionExport;
 use crate::copilot_chat::models::ChatSessionSummary;
 use crate::copilot_chat::models::ChatTurn;
 use crate::storage_json::paths::VSCodePath;
-use eyre::eyre;
 use eyre::Context;
+use eyre::eyre;
 use serde_json::Value;
 use std::fs;
 use std::path::Path;
@@ -224,7 +224,11 @@ fn load_session_records(path: &Path) -> eyre::Result<Vec<Value>> {
     match extension {
         "jsonl" => load_jsonl_records(path),
         "json" => load_json_records(path),
-        _ => Err(eyre!("Unsupported extension '{}': {}", extension, path.display())),
+        _ => Err(eyre!(
+            "Unsupported extension '{}': {}",
+            extension,
+            path.display()
+        )),
     }
 }
 

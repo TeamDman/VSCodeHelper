@@ -48,7 +48,7 @@ pub struct ChatSessionShowArgs {
     pub output_format: ChatOutputFormat,
 }
 
-#[derive(ValueEnum, Clone, Debug, Default, Arbitrary, PartialEq)]
+#[derive(ValueEnum, Copy, Clone, Debug, Default, Arbitrary, PartialEq)]
 pub enum ChatOutputFormat {
     #[default]
     Plain,
@@ -97,12 +97,15 @@ impl ChatSessionsArgs {
     }
 }
 
-fn render_chat_session(export: ChatSessionExport, output_format: ChatOutputFormat) -> eyre::Result<()> {
+fn render_chat_session(
+    export: ChatSessionExport,
+    output_format: ChatOutputFormat,
+) -> eyre::Result<()> {
     match output_format {
         ChatOutputFormat::Plain => {
             println!("session_id: {}", export.session.session_id);
             if let Some(title) = &export.session.session_title {
-                println!("title: {}", title);
+                println!("title: {title}");
             }
             println!("workspace: {}", export.session.workspace_path_display());
             println!("turns: {}", export.turns.len());
@@ -110,10 +113,10 @@ fn render_chat_session(export: ChatSessionExport, output_format: ChatOutputForma
                 println!("---");
                 println!("request_index: {}", turn.request_index);
                 if let Some(user_message) = turn.user_message {
-                    println!("user: {}", user_message);
+                    println!("user: {user_message}");
                 }
                 if let Some(assistant_text) = turn.assistant_text {
-                    println!("assistant: {}", assistant_text);
+                    println!("assistant: {assistant_text}");
                 }
             }
         }

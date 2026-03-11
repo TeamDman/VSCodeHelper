@@ -6,6 +6,7 @@ use serde::Serialize;
 
 use super::Key;
 
+#[derive(Debug)]
 pub struct HistoryRecentlyOpenedPathsListKey;
 impl Key for HistoryRecentlyOpenedPathsListKey {
     const KEY: &'static str = "history.recentlyOpenedPathsList";

@@ -4,17 +4,20 @@ pub mod schema;
 
 use crate::state_vscdb::schema::ItemTable::dsl::*;
 use crate::storage_json::paths::VSCodePath;
-use diesel::SqliteConnection;
 use diesel::prelude::*;
 use keys::Key;
 use models::Item;
 use std::path::PathBuf;
 
+#[expect(
+    missing_debug_implementations,
+    reason = "diesel::sqlite::SqliteConnection does not implement Debug"
+)]
 pub struct VSCodeStateVscdb {
-    pub connection: SqliteConnection,
+    pub connection: diesel::sqlite::SqliteConnection,
 }
 impl VSCodeStateVscdb {
-    pub fn new(connection: SqliteConnection) -> Self {
+    pub fn new(connection: diesel::sqlite::SqliteConnection) -> Self {
         Self { connection }
     }
     pub fn try_default() -> eyre::Result<Self> {

@@ -2,6 +2,12 @@
 name = "common"
 version = "0.1.0"
 edition = "2024"
+description = "Shared test helper utilities for VSCodeHelper examples"
+license = "MPL-2.0"
+repository = "https://github.com/TeamDman/VSCodeHelper"
+readme = "../../README.md"
+keywords = ["vscode", "testing"]
+categories = ["development-tools"]
 
 [dependencies]
 color-eyre = "0.6.3"
