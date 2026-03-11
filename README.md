@@ -96,3 +96,32 @@ cargo add vscodehelper
 - Rust 2024 Edition
 - VS Code installed on your system
 - Probably only works on Windows lol
+
+## CLI: Chat Session Backup
+
+The `teamy-vscode` binary supports backing up Copilot chat session files from VS Code workspace storage.
+
+### Set backup directory
+
+```pwsh
+teamy-vscode chat session backup dir set D:\Backups\CopilotChat
+```
+
+- The directory is created if needed.
+- The path is canonicalized before it is persisted.
+
+### Show backup directory
+
+```pwsh
+teamy-vscode chat session backup dir show
+```
+
+### Sync missing session files
+
+```pwsh
+teamy-vscode chat session backup sync
+```
+
+- Copies missing files from `workspaceStorage/*/chatSessions/*`.
+- Preserves structure as `workspaceStorage/{workspaceStorageId}/chatSessions/{sessionFile}` under the configured backup directory.
+- Existing backup files are not overwritten.

@@ -1,3 +1,4 @@
+mod backup_dir;
 pub mod models;
 
 use crate::copilot_chat::models::ChatSessionExport;
@@ -10,6 +11,15 @@ use serde_json::Value;
 use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
+
+pub use backup_dir::get_chat_session_backup_dir;
+pub use backup_dir::set_chat_session_backup_dir;
+
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub struct ChatSessionBackupSyncReport {
+    pub scanned_files: usize,
+    pub copied_files: usize,
+}
 
 /// Lists all discovered Copilot chat sessions from VS Code workspace storage.
 ///
@@ -78,6 +88,60 @@ pub fn load_chat_session_by_id(session_id: &str) -> eyre::Result<ChatSessionExpo
     let turns = extract_chat_turns(&records);
 
     Ok(ChatSessionExport { session, turns })
+}
+
+/// Copies missing chat session files into a backup directory.
+///
+/// Source files are discovered under `workspaceStorage/*/chatSessions/*` and copied into:
+/// `backup_dir/workspaceStorage/<workspace-id>/chatSessions/<session-file>`.
+/// Existing files in the backup directory are not overwritten.
+///
+/// # Errors
+/// Returns an error if source discovery or file copy operations fail.
+pub fn sync_chat_sessions_to_backup_dir(
+    backup_dir: &Path,
+) -> eyre::Result<ChatSessionBackupSyncReport> {
+    let mut scanned_files = 0;
+    let mut copied_files = 0;
+
+    for workspace in discover_workspace_storages()? {
+        let chat_sessions_dir = workspace.storage_path.join("chatSessions");
+        if !chat_sessions_dir.is_dir() {
+            continue;
+        }
+
+        for entry in fs::read_dir(&chat_sessions_dir)? {
+            let entry = entry?;
+            if !entry.file_type()?.is_file() {
+                continue;
+            }
+
+            scanned_files += 1;
+
+            let source_path = entry.path();
+            let target_path = backup_dir
+                .join("workspaceStorage")
+                .join(&workspace.id)
+                .join("chatSessions")
+                .join(entry.file_name());
+
+            if target_path.exists() {
+                continue;
+            }
+
+            let target_parent = target_path
+                .parent()
+                .ok_or_else(|| eyre!("Target path has no parent: {}", target_path.display()))?;
+            fs::create_dir_all(target_parent)?;
+            fs::copy(&source_path, &target_path)?;
+            copied_files += 1;
+        }
+    }
+
+    Ok(ChatSessionBackupSyncReport {
+        scanned_files,
+        copied_files,
+    })
 }
 
 fn fallback_session_metadata(path: &Path) -> (String, Option<String>, Option<i64>) {
