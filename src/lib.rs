@@ -1,4 +1,5 @@
 pub mod cli;
+pub mod copilot_chat;
 pub mod state_vscdb;
 pub mod storage_json;
 pub mod tracing;

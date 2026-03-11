@@ -874,7 +874,7 @@ checksum = "accd4ea62f7bb7a82fe23066fb0957d48ef677f6eeb8215f372f52e48bb32426"
 
 [[package]]
 name = "vscodehelper"
-version = "0.2.1"
+version = "0.3.0"
 dependencies = [
  "arbitrary",
  "chrono",
@@ -890,7 +890,7 @@ dependencies = [
  "serde_json",
  "tracing",
  "tracing-subscriber",
- "vscodehelper-macros 0.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
+ "vscodehelper-macros",
 ]
 
 [[package]]
@@ -900,16 +900,6 @@ dependencies = [
  "eyre",
  "quote",
  "serde",
- "syn",
-]
-
-[[package]]
-name = "vscodehelper-macros"
-version = "0.1.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "12e6344d233d73eefc5e0280b3224d7c87862782880400a9addd42329ae7b07b"
-dependencies = [
- "quote",
  "syn",
 ]
 

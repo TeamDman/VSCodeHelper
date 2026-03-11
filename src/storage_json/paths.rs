@@ -5,6 +5,7 @@ pub enum VSCodePath {
     AppData,
     StorageJson,
     StateVscdb,
+    WorkspaceStorage,
 }
 impl VSCodePath {
     pub fn path(self) -> eyre::Result<PathBuf> {
@@ -35,6 +36,10 @@ impl TryFrom<VSCodePath> for PathBuf {
                     .join("User")
                     .join("globalStorage")
                     .join("state.vscdb"))
+            }
+            VSCodePath::WorkspaceStorage => {
+                let app_data: PathBuf = VSCodePath::AppData.try_into()?;
+                Ok(app_data.join("Code").join("User").join("workspaceStorage"))
             }
         }
     }

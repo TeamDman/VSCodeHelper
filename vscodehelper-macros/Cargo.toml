@@ -1,10 +1,7 @@
-cargo-features=["test-dummy-unstable"]
-
 [package]
 name = "vscodehelper-macros"
 version = "0.1.0"
 edition = "2024"
-im-a-teapot = false
 description = "Macros for vscodehelper crate"
 authors = ["TeamDman"]
 license = "MPL-2.0"
