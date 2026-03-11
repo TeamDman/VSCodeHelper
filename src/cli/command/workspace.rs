@@ -35,6 +35,10 @@ pub enum OutputFormat {
 }
 
 impl WorkspaceArgs {
+    /// Executes workspace-related commands.
+    ///
+    /// # Errors
+    /// Returns an error if reading VS Code state or serializing output fails.
     pub fn invoke(self) -> eyre::Result<()> {
         match self.command {
             WorkspaceCommand::List(args) => {

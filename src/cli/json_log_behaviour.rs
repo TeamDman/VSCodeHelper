@@ -14,6 +14,7 @@ impl JsonLogBehaviour {
     /// Get the path where JSON logs should be written.
     /// Returns None if JSON logging is disabled.
     /// Returns Some with the path if a specific path was provided or if using automatic path generation.
+    #[must_use]
     pub fn get_path(&self) -> Option<Cow<'_, PathBuf>> {
         match self {
             JsonLogBehaviour::None => None,

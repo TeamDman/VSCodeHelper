@@ -17,6 +17,10 @@ pub enum Command {
 }
 
 impl Command {
+    /// Dispatches to the selected top-level command.
+    ///
+    /// # Errors
+    /// Returns an error if the selected command fails.
     pub fn invoke(self) -> eyre::Result<()> {
         match self {
             Command::Chat(args) => args.invoke(),

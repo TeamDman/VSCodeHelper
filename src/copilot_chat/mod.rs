@@ -11,10 +11,14 @@ use std::fs;
 use std::path::Path;
 use std::path::PathBuf;
 
+/// Lists all discovered Copilot chat sessions from VS Code workspace storage.
+///
+/// # Errors
+/// Returns an error if workspace storage discovery or session file reading fails.
 pub fn list_chat_sessions() -> eyre::Result<Vec<ChatSessionSummary>> {
     let mut sessions = Vec::new();
     for workspace in discover_workspace_storages()? {
-        let chat_sessions_dir = workspace.workspace_storage_path.join("chatSessions");
+        let chat_sessions_dir = workspace.storage_path.join("chatSessions");
         if !chat_sessions_dir.is_dir() {
             continue;
         }
@@ -38,7 +42,7 @@ pub fn list_chat_sessions() -> eyre::Result<Vec<ChatSessionSummary>> {
                 read_session_metadata(&path).unwrap_or_else(|_| fallback_session_metadata(&path));
 
             sessions.push(ChatSessionSummary {
-                workspace_storage_id: workspace.workspace_storage_id.clone(),
+                workspace_storage_id: workspace.id.clone(),
                 workspace_path: workspace.workspace_path.clone(),
                 session_id,
                 session_title,
@@ -58,6 +62,11 @@ pub fn list_chat_sessions() -> eyre::Result<Vec<ChatSessionSummary>> {
     Ok(sessions)
 }
 
+/// Loads a specific Copilot chat session and extracts its turns.
+///
+/// # Errors
+/// Returns an error if session discovery fails, the session id is not found, or session records
+/// cannot be parsed.
 pub fn load_chat_session_by_id(session_id: &str) -> eyre::Result<ChatSessionExport> {
     let sessions = list_chat_sessions()?;
     let session = sessions
@@ -66,7 +75,7 @@ pub fn load_chat_session_by_id(session_id: &str) -> eyre::Result<ChatSessionExpo
         .ok_or_else(|| eyre!("Session not found: {session_id}"))?;
 
     let records = load_session_records(&session.session_file_path)?;
-    let turns = extract_chat_turns(&records)?;
+    let turns = extract_chat_turns(&records);
 
     Ok(ChatSessionExport { session, turns })
 }
@@ -109,11 +118,11 @@ fn read_session_metadata(path: &Path) -> eyre::Result<(String, Option<String>, O
     Ok((session_id, session_title, session_created_at_ms))
 }
 
-fn extract_chat_turns(records: &[Value]) -> eyre::Result<Vec<ChatTurn>> {
+fn extract_chat_turns(records: &[Value]) -> Vec<ChatTurn> {
     let root_requests = find_root_record(records)
         .and_then(|root| root.pointer("/v/requests"))
         .and_then(Value::as_array)
-        .map(|array| array.to_vec())
+        .cloned()
         .unwrap_or_default();
 
     let mut requests = root_requests;
@@ -127,10 +136,11 @@ fn extract_chat_turns(records: &[Value]) -> eyre::Result<Vec<ChatTurn>> {
             .and_then(Value::as_str)
             == Some("requests");
 
-        if is_kind_2 && is_requests_update {
-            if let Some(request) = record.get("v") {
-                requests.push(request.clone());
-            }
+        if is_kind_2
+            && is_requests_update
+            && let Some(request) = record.get("v")
+        {
+            requests.push(request.clone());
         }
     }
 
@@ -179,7 +189,7 @@ fn extract_chat_turns(records: &[Value]) -> eyre::Result<Vec<ChatTurn>> {
         });
     }
 
-    Ok(turns)
+    turns
 }
 
 fn extract_assistant_text(response_parts: &[Value]) -> Option<String> {
@@ -258,8 +268,8 @@ fn load_json_records(path: &Path) -> eyre::Result<Vec<Value>> {
 
 #[derive(Debug)]
 struct WorkspaceStorage {
-    workspace_storage_id: String,
-    workspace_storage_path: PathBuf,
+    id: String,
+    storage_path: PathBuf,
     workspace_path: Option<PathBuf>,
 }
 
@@ -276,9 +286,9 @@ fn discover_workspace_storages() -> eyre::Result<Vec<WorkspaceStorage>> {
             continue;
         }
 
-        let workspace_storage_path = entry.path();
-        let workspace_storage_id = entry.file_name().to_string_lossy().to_string();
-        let workspace_json_path = workspace_storage_path.join("workspace.json");
+        let storage_path = entry.path();
+        let id = entry.file_name().to_string_lossy().to_string();
+        let workspace_json_path = storage_path.join("workspace.json");
 
         let workspace_path = if workspace_json_path.is_file() {
             parse_workspace_path(&workspace_json_path).ok().flatten()
@@ -287,8 +297,8 @@ fn discover_workspace_storages() -> eyre::Result<Vec<WorkspaceStorage>> {
         };
 
         storages.push(WorkspaceStorage {
-            workspace_storage_id,
-            workspace_storage_path,
+            id,
+            storage_path,
             workspace_path,
         });
     }

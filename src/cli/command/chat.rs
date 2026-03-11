@@ -57,6 +57,10 @@ pub enum ChatOutputFormat {
 }
 
 impl ChatArgs {
+    /// Executes the selected chat subcommand.
+    ///
+    /// # Errors
+    /// Returns an error if the selected subcommand fails.
     pub fn invoke(self) -> eyre::Result<()> {
         match self.command {
             ChatCommand::Sessions(args) => args.invoke(),
@@ -65,6 +69,10 @@ impl ChatArgs {
 }
 
 impl ChatSessionsArgs {
+    /// Executes chat session operations.
+    ///
+    /// # Errors
+    /// Returns an error if reading sessions, loading a session, or rendering output fails.
     pub fn invoke(self) -> eyre::Result<()> {
         match self.command {
             ChatSessionsCommand::List(args) => {

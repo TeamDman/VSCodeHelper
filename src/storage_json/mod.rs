@@ -40,6 +40,10 @@ use tracing::debug;
 
 #[derive(Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
+#[expect(
+    clippy::struct_excessive_bools,
+    reason = "This struct mirrors VS Code's persisted storage.json schema"
+)]
 pub struct VSCodeStorageJson {
     #[serde(rename = "telemetry.machineId")]
     pub telemetry_machine_id: MachineId,
@@ -64,6 +68,11 @@ pub struct VSCodeStorageJson {
 }
 
 impl VSCodeStorageJson {
+    /// Loads and parses VS Code's global `storage.json` from disk.
+    ///
+    /// # Errors
+    /// Returns an error if the file path cannot be resolved, the file cannot be read, or JSON
+    /// parsing fails.
     pub fn load_from_disk() -> eyre::Result<Self> {
         let json_path: PathBuf = VSCodePath::StorageJson.try_into()?;
         debug!("Trying to load storage json from: {}", json_path.display());

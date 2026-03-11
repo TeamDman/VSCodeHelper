@@ -14,7 +14,15 @@ use tracing_subscriber::util::SubscriberInitExt;
 
 use crate::cli::json_log_behaviour::JsonLogBehaviour;
 
-pub fn init_tracing(level: impl Into<Directive>, json_behaviour: JsonLogBehaviour) -> Result<()> {
+/// Initializes tracing subscribers for stderr and optional JSON log output.
+///
+/// # Errors
+/// Returns an error if creating log directories/files fails.
+///
+/// # Panics
+/// Panics if the internal JSON log writer cannot acquire the file mutex lock or cannot clone
+/// the file handle while writing log events.
+pub fn init_tracing(level: impl Into<Directive>, json_behaviour: &JsonLogBehaviour) -> Result<()> {
     let default_directive: Directive = level.into();
     let env_filter = EnvFilter::builder()
         .with_default_directive(default_directive.clone())
@@ -81,7 +89,8 @@ pub fn init_tracing(level: impl Into<Directive>, json_behaviour: JsonLogBehaviou
 }
 
 /// Generate a default JSON log filename with timestamp
+#[must_use]
 pub fn default_json_log_path() -> PathBuf {
     let timestamp = Local::now().format("%Y-%m-%d_%Hh%Mm%Ss");
-    PathBuf::from(format!("teamy_vscode_log_{}.jsonl", timestamp))
+    PathBuf::from(format!("teamy_vscode_log_{timestamp}.jsonl"))
 }

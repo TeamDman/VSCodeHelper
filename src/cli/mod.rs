@@ -19,6 +19,10 @@ pub struct Cli {
 }
 
 impl Cli {
+    /// Executes the parsed CLI command.
+    ///
+    /// # Errors
+    /// Returns an error if command execution fails.
     pub fn invoke(self) -> eyre::Result<()> {
         self.command.invoke()
     }

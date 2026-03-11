@@ -19,6 +19,11 @@ pub struct PathHolder {
 pub trait HasWorkspacePath {
     fn workspace_path(&self) -> Uri;
 
+    /// Reads and parses the workspace JSON document for this workspace entry.
+    ///
+    /// # Errors
+    /// Returns an error if the workspace URI is not a local path, the file cannot be opened, or
+    /// JSON parsing fails.
     fn read(&self) -> eyre::Result<WorkspaceJson> {
         let config_path = self.workspace_path().as_path()?;
         let workspace_json: WorkspaceJson =

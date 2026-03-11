@@ -25,6 +25,7 @@ pub struct GlobalArgs {
 }
 
 impl GlobalArgs {
+    #[must_use]
     pub fn log_level(&self) -> tracing::Level {
         if self.debug {
             tracing::Level::DEBUG
@@ -34,6 +35,7 @@ impl GlobalArgs {
     }
 
     /// Get the JSON log behaviour based on the --json argument.
+    #[must_use]
     pub fn json_log_behaviour(&self) -> JsonLogBehaviour {
         match &self.json {
             None => JsonLogBehaviour::None,

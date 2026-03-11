@@ -32,6 +32,10 @@ pub enum Uri {
 }
 
 impl Uri {
+    /// Converts this URI into a local filesystem path.
+    ///
+    /// # Errors
+    /// Returns an error when the URI does not represent a local filesystem path.
     pub fn as_path(&self) -> eyre::Result<PathBuf> {
         match self {
             Uri::LocalPath(path) => Ok(path.clone()),
@@ -40,6 +44,7 @@ impl Uri {
         }
     }
 
+    #[must_use]
     pub fn protocol(&self) -> &'static str {
         match self {
             Uri::LocalPath(_) => "file",
@@ -56,10 +61,9 @@ impl std::fmt::Display for Uri {
                 // Best effort serialization to VSCode URI format
                 let path_str = path.to_string_lossy().replace('\\', "/");
                 let encoded = utf8_percent_encode(&path_str, PATH_SEGMENT);
-                write!(f, "file:///{}", encoded)
+                write!(f, "file:///{encoded}")
             }
-            Uri::VsCodeRemotePath(s) => write!(f, "{}", s),
-            Uri::Unknown(s) => write!(f, "{}", s),
+            Uri::VsCodeRemotePath(s) | Uri::Unknown(s) => write!(f, "{s}"),
         }
     }
 }
@@ -104,7 +108,6 @@ impl<'de> Deserialize<'de> for Uri {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use serde_json;
 
     #[test]
     fn test_uri_round_trip_with_spaces() {

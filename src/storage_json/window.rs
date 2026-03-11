@@ -61,7 +61,7 @@ impl<'de> Deserialize<'de> for Window {
             }
 
             let window: WorkspaceWindow = serde_json::from_value(value)
-                .map_err(|e| serde::de::Error::custom(format!("Invalid WorkspaceWindow: {}", e)))?;
+                .map_err(|e| serde::de::Error::custom(format!("Invalid WorkspaceWindow: {e}")))?;
 
             Ok(Window::WorkspaceWindow {
                 workspace_identifier: window.workspace_identifier,
@@ -70,7 +70,7 @@ impl<'de> Deserialize<'de> for Window {
             })
         } else if value.get("folder").is_some() {
             let window: FolderWindow = serde_json::from_value(value)
-                .map_err(|e| serde::de::Error::custom(format!("Invalid FolderWindow: {}", e)))?;
+                .map_err(|e| serde::de::Error::custom(format!("Invalid FolderWindow: {e}")))?;
 
             Ok(Window::FolderWindow {
                 folder: window.folder,

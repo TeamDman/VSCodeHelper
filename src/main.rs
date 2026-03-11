@@ -10,7 +10,7 @@ fn main() -> eyre::Result<()> {
 
     tracing::init_tracing(
         cli.global_args.log_level(),
-        cli.global_args.json_log_behaviour(),
+        &cli.global_args.json_log_behaviour(),
     )?;
 
     cli.invoke()?;

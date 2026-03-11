@@ -11,6 +11,10 @@ pub struct Item {
     pub value: Vec<u8>,
 }
 impl Item {
+    /// Parses this item's JSON value for the requested key type.
+    ///
+    /// # Errors
+    /// Returns an error if the key does not match `K::KEY` or if the value JSON cannot be parsed.
     pub fn parse<K: Key>(&self) -> eyre::Result<K::Value> {
         if self.key != K::KEY {
             return Err(eyre::eyre!(
@@ -22,6 +26,11 @@ impl Item {
         let value = serde_json::from_slice(&self.value)?;
         Ok(value)
     }
+
+    /// Converts this item's raw bytes to UTF-8 text.
+    ///
+    /// # Errors
+    /// Returns an error if the value is not valid UTF-8.
     pub fn value_as_string(&self) -> eyre::Result<String> {
         let value = String::from_utf8(self.value.clone())?;
         Ok(value)
