@@ -1,37 +1,39 @@
-use crate::cli::to_args::ToArgs;
 use crate::copilot_chat::get_chat_session_backup_dir;
 use crate::copilot_chat::list_chat_sessions;
 use crate::copilot_chat::load_chat_session_by_id;
+use crate::copilot_chat::models::ChatSessionExport;
 use crate::copilot_chat::set_chat_session_backup_dir;
 use crate::copilot_chat::sync_chat_sessions_to_backup_dir;
-use crate::copilot_chat::models::ChatSessionExport;
 use arbitrary::Arbitrary;
-use clap::Args;
-use clap::Subcommand;
-use clap::ValueEnum;
-use std::ffi::OsString;
+use facet::Facet;
+use figue as args;
 use std::path::Path;
 
-#[derive(Args, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
 pub struct ChatArgs {
-    #[clap(subcommand)]
+    #[facet(args::subcommand)]
     pub command: ChatCommand,
 }
 
-#[derive(Subcommand, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
+#[repr(u8)]
 pub enum ChatCommand {
     /// Chat session commands
-    #[clap(alias = "session")]
     Sessions(ChatSessionsArgs),
 }
 
-#[derive(Args, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
 pub struct ChatSessionsArgs {
-    #[clap(subcommand)]
+    #[facet(args::subcommand)]
     pub command: ChatSessionsCommand,
 }
 
-#[derive(Subcommand, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
+#[repr(u8)]
 pub enum ChatSessionsCommand {
     /// List discovered chat sessions
     List(ChatSessionListArgs),
@@ -41,13 +43,16 @@ pub enum ChatSessionsCommand {
     Backup(ChatSessionBackupArgs),
 }
 
-#[derive(Args, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
 pub struct ChatSessionBackupArgs {
-    #[clap(subcommand)]
+    #[facet(args::subcommand)]
     pub command: ChatSessionBackupCommand,
 }
 
-#[derive(Subcommand, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
+#[repr(u8)]
 pub enum ChatSessionBackupCommand {
     /// Configure backup directory
     Dir(ChatSessionBackupDirArgs),
@@ -55,13 +60,16 @@ pub enum ChatSessionBackupCommand {
     Sync(ChatSessionBackupSyncArgs),
 }
 
-#[derive(Args, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
 pub struct ChatSessionBackupDirArgs {
-    #[clap(subcommand)]
+    #[facet(args::subcommand)]
     pub command: ChatSessionBackupDirCommand,
 }
 
-#[derive(Subcommand, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
+#[repr(u8)]
 pub enum ChatSessionBackupDirCommand {
     /// Set the backup directory
     Set(ChatSessionBackupDirSetArgs),
@@ -69,32 +77,38 @@ pub enum ChatSessionBackupDirCommand {
     Show(ChatSessionBackupDirShowArgs),
 }
 
-#[derive(Args, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
 pub struct ChatSessionBackupDirSetArgs {
+    #[facet(args::positional)]
     pub backup_dir: String,
 }
 
-#[derive(Args, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
 pub struct ChatSessionBackupDirShowArgs;
 
-#[derive(Args, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
 pub struct ChatSessionBackupSyncArgs;
 
-#[derive(Args, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
 pub struct ChatSessionListArgs {
-    #[clap(short = 'o', long, value_enum, default_value_t = ChatOutputFormat::Plain)]
+    #[facet(args::named, args::short = 'o', default = ChatOutputFormat::Plain)]
     pub output_format: ChatOutputFormat,
 }
 
-#[derive(Args, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
 pub struct ChatSessionShowArgs {
-    #[clap(long)]
+    #[facet(args::named)]
     pub session_id: String,
-    #[clap(short = 'o', long, value_enum, default_value_t = ChatOutputFormat::PrettyJson)]
+    #[facet(args::named, args::short = 'o', default = ChatOutputFormat::PrettyJson)]
     pub output_format: ChatOutputFormat,
 }
 
-#[derive(ValueEnum, Copy, Clone, Debug, Default, Arbitrary, PartialEq)]
+#[derive(Facet, Copy, Clone, Debug, Default, Arbitrary, PartialEq)]
+#[facet(rename_all = "kebab-case")]
+#[repr(u8)]
 pub enum ChatOutputFormat {
     #[default]
     Plain,
@@ -150,7 +164,8 @@ impl ChatSessionsArgs {
             ChatSessionsCommand::Backup(args) => match args.command {
                 ChatSessionBackupCommand::Dir(dir_args) => match dir_args.command {
                     ChatSessionBackupDirCommand::Set(set_args) => {
-                        let backup_dir = set_chat_session_backup_dir(Path::new(&set_args.backup_dir))?;
+                        let backup_dir =
+                            set_chat_session_backup_dir(Path::new(&set_args.backup_dir))?;
                         println!("{}", backup_dir.display());
                         Ok(())
                     }
@@ -215,88 +230,4 @@ fn render_chat_session(
         }
     }
     Ok(())
-}
-
-impl ToArgs for ChatArgs {
-    fn to_args(&self) -> Vec<OsString> {
-        let mut args = Vec::new();
-        match &self.command {
-            ChatCommand::Sessions(sessions_args) => {
-                args.push("sessions".into());
-                args.extend(sessions_args.to_args());
-            }
-        }
-        args
-    }
-}
-
-impl ToArgs for ChatSessionsArgs {
-    fn to_args(&self) -> Vec<OsString> {
-        let mut args = Vec::new();
-        match &self.command {
-            ChatSessionsCommand::List(list_args) => {
-                args.push("list".into());
-                args.push("--output-format".into());
-                args.push(
-                    list_args
-                        .output_format
-                        .to_possible_value()
-                        .expect("ValueEnum should have a value")
-                        .get_name()
-                        .into(),
-                );
-            }
-            ChatSessionsCommand::Show(show_args) => {
-                args.push("show".into());
-                args.push("--session-id".into());
-                args.push(show_args.session_id.clone().into());
-                args.push("--output-format".into());
-                args.push(
-                    show_args
-                        .output_format
-                        .to_possible_value()
-                        .expect("ValueEnum should have a value")
-                        .get_name()
-                        .into(),
-                );
-            }
-            ChatSessionsCommand::Backup(backup_args) => {
-                args.push("backup".into());
-                args.extend(backup_args.to_args());
-            }
-        }
-        args
-    }
-}
-
-impl ToArgs for ChatSessionBackupArgs {
-    fn to_args(&self) -> Vec<OsString> {
-        let mut args = Vec::new();
-        match &self.command {
-            ChatSessionBackupCommand::Dir(dir_args) => {
-                args.push("dir".into());
-                args.extend(dir_args.to_args());
-            }
-            ChatSessionBackupCommand::Sync(_) => {
-                args.push("sync".into());
-            }
-        }
-        args
-    }
-}
-
-impl ToArgs for ChatSessionBackupDirArgs {
-    fn to_args(&self) -> Vec<OsString> {
-        let mut args = Vec::new();
-        match &self.command {
-            ChatSessionBackupDirCommand::Set(set_args) => {
-                args.push("set".into());
-                args.push(set_args.backup_dir.clone().into());
-            }
-            ChatSessionBackupDirCommand::Show(_) => {
-                args.push("show".into());
-            }
-        }
-        args
-    }
 }

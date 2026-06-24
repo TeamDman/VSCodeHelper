@@ -1,32 +1,35 @@
-use crate::cli::to_args::ToArgs;
 use crate::state_vscdb::VSCodeStateVscdb;
 use crate::state_vscdb::keys::history_recently_opened_paths_list::Entry;
 use crate::state_vscdb::well_known_keys;
 use arbitrary::Arbitrary;
-use clap::Args;
-use clap::Subcommand;
-use clap::ValueEnum;
-use std::ffi::OsString;
+use facet::Facet;
+use figue as args;
 
-#[derive(Args, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
 pub struct WorkspaceArgs {
-    #[clap(subcommand)]
+    #[facet(args::subcommand)]
     pub command: WorkspaceCommand,
 }
 
-#[derive(Subcommand, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
+#[repr(u8)]
 pub enum WorkspaceCommand {
     /// List recent workspaces
     List(ListArgs),
 }
 
-#[derive(Args, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
 pub struct ListArgs {
-    #[clap(short = 'o', long, value_enum, default_value_t = OutputFormat::Plain)]
+    #[facet(args::named, args::short = 'o', default = OutputFormat::Plain)]
     pub output_format: OutputFormat,
 }
 
-#[derive(ValueEnum, Clone, Debug, Default, Arbitrary, PartialEq)]
+#[derive(Facet, Clone, Debug, Default, Arbitrary, PartialEq)]
+#[facet(rename_all = "kebab-case")]
+#[repr(u8)]
 pub enum OutputFormat {
     #[default]
     Plain,
@@ -67,26 +70,5 @@ impl WorkspaceArgs {
                 Ok(())
             }
         }
-    }
-}
-
-impl ToArgs for WorkspaceArgs {
-    fn to_args(&self) -> Vec<OsString> {
-        let mut args = Vec::new();
-        match &self.command {
-            WorkspaceCommand::List(list_args) => {
-                args.push("list".into());
-                args.push("--output-format".into());
-                args.push(
-                    list_args
-                        .output_format
-                        .to_possible_value()
-                        .expect("ValueEnum should have a value")
-                        .get_name()
-                        .into(),
-                );
-            }
-        }
-        args
     }
 }

@@ -1,21 +1,34 @@
 pub mod command;
 pub mod global_args;
 pub mod json_log_behaviour;
-pub mod to_args;
 use crate::cli::command::Command;
 use crate::cli::global_args::GlobalArgs;
 use arbitrary::Arbitrary;
-use clap::Parser;
-use std::ffi::OsString;
-use to_args::ToArgs;
+use facet::Facet;
+use figue::{self as args, FigueBuiltins};
 
-#[derive(Parser, Arbitrary, PartialEq, Debug)]
-#[clap(version)]
+/// Inspect Visual Studio Code configuration and state files.
+#[derive(Facet, Arbitrary, Debug)]
+#[facet(rename_all = "kebab-case")]
 pub struct Cli {
-    #[clap(flatten)]
+    /// Global arguments.
+    #[facet(flatten)]
     pub global_args: GlobalArgs,
-    #[clap(subcommand)]
+
+    /// Standard CLI options.
+    #[facet(flatten)]
+    #[arbitrary(default)]
+    pub builtins: FigueBuiltins,
+
+    /// The command to run.
+    #[facet(args::subcommand)]
     pub command: Command,
+}
+
+impl PartialEq for Cli {
+    fn eq(&self, other: &Self) -> bool {
+        self.global_args == other.global_args && self.command == other.command
+    }
 }
 
 impl Cli {
@@ -25,14 +38,5 @@ impl Cli {
     /// Returns an error if command execution fails.
     pub fn invoke(self) -> eyre::Result<()> {
         self.command.invoke()
-    }
-}
-
-impl ToArgs for Cli {
-    fn to_args(&self) -> Vec<OsString> {
-        let mut args = Vec::new();
-        args.extend(self.global_args.to_args());
-        args.extend(self.command.to_args());
-        args
     }
 }

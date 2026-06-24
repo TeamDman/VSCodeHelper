@@ -5,10 +5,11 @@ edition = "2024"
 description = "Understanding the data that VSCode writes to disk"
 authors = ["TeamDman"]
 license = "MPL-2.0"
-repository = "https://github.com/TeamDman/VSCodeHelper"
+repository = "https://github.com/TeamDman/teamy-vscode"
 readme = "README.md"
 keywords = ["vscode", "vs-code", "windows", "sqlite", "json"]
 categories = ["development-tools"]
+documentation = "https://github.com/TeamDman/teamy-vscode"
 
 [workspace]
 members = ["examples/*", "vscodehelper-macros"]
@@ -27,11 +28,12 @@ diesel = { version = "2.2.0", features = [
 libsqlite3-sys = { version = "0.30", features = ["bundled"] }
 dotenvy = "0.15"
 percent-encoding = "2.3.1"
-clap = { version = "4.5.43", features = ["derive"] }
 color-eyre = "0.6.5"
 tracing-subscriber = { version = "0.3.19", features = ["env-filter", "json"] }
 chrono = "0.4"
 arbitrary = { version = "1.4.1", features = ["derive"] }
+facet = "=0.46.5"
+figue = { package = "teamy-figue", version = "=5.1.0", features = ["arbitrary"] }
 
 [[bin]]
 name = "teamy-vscode"
@@ -42,6 +44,7 @@ common = { path = "examples/common" }
 
 [lints.rust]
 ambiguous_negative_literals = "warn"
+unfulfilled_lint_expectations = "deny"
 missing_debug_implementations = "warn"
 redundant_imports = "warn"
 redundant_lifetimes = "warn"

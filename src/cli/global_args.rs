@@ -1,26 +1,19 @@
 use arbitrary::Arbitrary;
-use clap::Args;
-use std::ffi::OsString;
+use facet::Facet;
+use figue as args;
 
 use crate::cli::json_log_behaviour::JsonLogBehaviour;
-use crate::cli::to_args::ToArgs;
 
-#[derive(Args, Default, Arbitrary, PartialEq, Debug)]
+#[derive(Facet, Default, Arbitrary, PartialEq, Debug)]
+#[facet(rename_all = "kebab-case")]
 pub struct GlobalArgs {
     /// Enable debug logging
-    #[clap(long, global = true)]
+    #[facet(args::named, default)]
     pub debug: bool,
 
     /// Emit structured JSON logs alongside stderr output.
     /// Optionally specify a filename; if not provided, a timestamped filename will be generated.
-    #[clap(
-        long,
-        global = true,
-        value_name = "FILE",
-        num_args = 0..=1,
-        default_missing_value = "",
-        require_equals = false
-    )]
+    #[facet(args::named, args::label = "FILE")]
     json: Option<String>,
 }
 
@@ -42,25 +35,5 @@ impl GlobalArgs {
             Some(s) if s.is_empty() => JsonLogBehaviour::SomeAutomaticPath,
             Some(s) => JsonLogBehaviour::Some(s.into()),
         }
-    }
-}
-
-impl ToArgs for GlobalArgs {
-    fn to_args(&self) -> Vec<OsString> {
-        let mut args = Vec::new();
-        if self.debug {
-            args.push("--debug".into());
-        }
-        match &self.json {
-            None => {}
-            Some(s) if s.is_empty() => {
-                args.push("--json".into());
-            }
-            Some(path) => {
-                args.push("--json".into());
-                args.push(path.into());
-            }
-        }
-        args
     }
 }
